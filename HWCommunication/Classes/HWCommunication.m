@@ -143,7 +143,8 @@ NSString* mUid;
             messageModel.fromUid=messageModel.uid;
             messageModel.msg_id=content[@"id"];
             messageModel.direction=1;
-            messageModel.currentTimeMillis=[[NSNumber numberWithLongLong:[[NSDate date] timeStamp]] longLongValue];
+           
+            messageModel.currentTimeMillis=[[NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970]*1000] longLongValue];
             
             [[HWDBManager shareManager] addMessage:messageModel];
              [[HWDBManager shareManager] addOrUpdateConversationWithMessage:messageModel isChatting:false];
@@ -192,7 +193,7 @@ NSString* mUid;
         messageModel.message=message;
         messageModel.msg_id=response[@"data"];
         messageModel.room=tuid;
-        messageModel.currentTimeMillis=[[NSNumber numberWithLongLong:[[NSDate date] timeStamp]] longLongValue];
+        messageModel.currentTimeMillis=[[NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970]*1000] longLongValue];
         messageModel.direction=0;
         messageModel.read=0;
         messageModel.messagetype=type;
