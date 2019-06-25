@@ -14,15 +14,6 @@
 		040D1F1122C228430003AF19 /* ConfigConstant.h in Headers */ = {isa = PBXBuildFile; fileRef = 040D1EE622C228410003AF19 /* ConfigConstant.h */; };
 		040D1F1222C228430003AF19 /* RequestUrlConst.h in Headers */ = {isa = PBXBuildFile; fileRef = 040D1EE722C228410003AF19 /* RequestUrlConst.h */; };
 		040D1F1322C228430003AF19 /* HWCommunication.h in Headers */ = {isa = PBXBuildFile; fileRef = 040D1EE822C228420003AF19 /* HWCommunication.h */; };
-		040D1F1422C228430003AF19 /* AppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 040D1EEA22C228420003AF19 /* AppDelegate.h */; };
-		040D1F1522C228430003AF19 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 040D1EEB22C228420003AF19 /* AppDelegate.m */; };
-		040D1F1622C228430003AF19 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 040D1EEC22C228420003AF19 /* Assets.xcassets */; };
-		040D1F1722C228430003AF19 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 040D1EED22C228420003AF19 /* LaunchScreen.storyboard */; };
-		040D1F1822C228430003AF19 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 040D1EEF22C228420003AF19 /* Main.storyboard */; };
-		040D1F1922C228430003AF19 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 040D1EF122C228420003AF19 /* Info.plist */; };
-		040D1F1A22C228430003AF19 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 040D1EF222C228420003AF19 /* main.m */; };
-		040D1F1B22C228430003AF19 /* ViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 040D1EF322C228420003AF19 /* ViewController.h */; };
-		040D1F1C22C228430003AF19 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 040D1EF422C228420003AF19 /* ViewController.m */; };
 		040D1F1D22C228430003AF19 /* HWNetWorkManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 040D1EF622C228420003AF19 /* HWNetWorkManager.h */; };
 		040D1F1E22C228430003AF19 /* HWNetWorkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 040D1EF722C228420003AF19 /* HWNetWorkManager.m */; };
 		040D1F1F22C228430003AF19 /* HWRequestUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 040D1EF822C228420003AF19 /* HWRequestUtil.h */; };
@@ -76,15 +67,6 @@
 		040D1EE622C228410003AF19 /* ConfigConstant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigConstant.h; sourceTree = "<group>"; };
 		040D1EE722C228410003AF19 /* RequestUrlConst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RequestUrlConst.h; sourceTree = "<group>"; };
 		040D1EE822C228420003AF19 /* HWCommunication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HWCommunication.h; path = HWCommunication/Classes/HWCommunication.h; sourceTree = "<group>"; };
-		040D1EEA22C228420003AF19 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		040D1EEB22C228420003AF19 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		040D1EEC22C228420003AF19 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		040D1EEE22C228420003AF19 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		040D1EF022C228420003AF19 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		040D1EF122C228420003AF19 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		040D1EF222C228420003AF19 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		040D1EF322C228420003AF19 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		040D1EF422C228420003AF19 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		040D1EF622C228420003AF19 /* HWNetWorkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HWNetWorkManager.h; sourceTree = "<group>"; };
 		040D1EF722C228420003AF19 /* HWNetWorkManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HWNetWorkManager.m; sourceTree = "<group>"; };
 		040D1EF822C228420003AF19 /* HWRequestUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HWRequestUtil.h; sourceTree = "<group>"; };
@@ -183,23 +165,6 @@
 			path = HWCommunication/Classes/constant;
 			sourceTree = "<group>";
 		};
-		040D1EE922C228420003AF19 /* other */ = {
-			isa = PBXGroup;
-			children = (
-				040D1EEA22C228420003AF19 /* AppDelegate.h */,
-				040D1EEB22C228420003AF19 /* AppDelegate.m */,
-				040D1EEC22C228420003AF19 /* Assets.xcassets */,
-				040D1EED22C228420003AF19 /* LaunchScreen.storyboard */,
-				040D1EEF22C228420003AF19 /* Main.storyboard */,
-				040D1EF122C228420003AF19 /* Info.plist */,
-				040D1EF222C228420003AF19 /* main.m */,
-				040D1EF322C228420003AF19 /* ViewController.h */,
-				040D1EF422C228420003AF19 /* ViewController.m */,
-			);
-			name = other;
-			path = HWCommunication/Classes/other;
-			sourceTree = "<group>";
-		};
 		040D1EF522C228420003AF19 /* net */ = {
 			isa = PBXGroup;
 			children = (
@@ -285,7 +250,6 @@
 				040D1EE422C228410003AF19 /* HWMediaUtils.m */,
 				040D1EFA22C228420003AF19 /* model */,
 				040D1EF522C228420003AF19 /* net */,
-				040D1EE922C228420003AF19 /* other */,
 				040D1EE122C228410003AF19 /* socket */,
 				040D1F0622C228420003AF19 /* utils */,
 				5597FCA423C628C832A137AED97A7844 /* Pod */,
@@ -417,8 +381,6 @@
 				040D1F2622C228430003AF19 /* HWDBManager.h in Headers */,
 				040D1F2922C228430003AF19 /* HWEncryptionUtil.h in Headers */,
 				040D1F2122C228430003AF19 /* HWChatMessageModel.h in Headers */,
-				040D1F1B22C228430003AF19 /* ViewController.h in Headers */,
-				040D1F1422C228430003AF19 /* AppDelegate.h in Headers */,
 				040D1F0D22C228430003AF19 /* HW_PrefixHeader.pch in Headers */,
 				040D1F2B22C228430003AF19 /* HWLogger.h in Headers */,
 			);
@@ -540,10 +502,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				040D1F1922C228430003AF19 /* Info.plist in Resources */,
-				040D1F1822C228430003AF19 /* Main.storyboard in Resources */,
-				040D1F1622C228430003AF19 /* Assets.xcassets in Resources */,
-				040D1F1722C228430003AF19 /* LaunchScreen.storyboard in Resources */,
 				040D1F2522C228430003AF19 /* Main.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -564,11 +522,8 @@
 			files = (
 				040D1F2022C228430003AF19 /* HWRequestUtil.m in Sources */,
 				040D1F2222C228430003AF19 /* HWChatMessageModel.m in Sources */,
-				040D1F1C22C228430003AF19 /* ViewController.m in Sources */,
-				040D1F1A22C228430003AF19 /* main.m in Sources */,
 				040D1F1E22C228430003AF19 /* HWNetWorkManager.m in Sources */,
 				040D1F2A22C228430003AF19 /* HWEncryptionUtil.m in Sources */,
-				040D1F1522C228430003AF19 /* AppDelegate.m in Sources */,
 				F9F56F4FB6CD2A2B547BCDFEAD118B0E /* HWCommunication-dummy.m in Sources */,
 				040D1F1022C228430003AF19 /* HWMediaUtils.m in Sources */,
 				040D1F0F22C228430003AF19 /* HWSocketManager.m in Sources */,
@@ -613,22 +568,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		040D1EED22C228420003AF19 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				040D1EEE22C228420003AF19 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-		040D1EEF22C228420003AF19 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				040D1EF022C228420003AF19 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		040D1F0022C228420003AF19 /* Main.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
