@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'HWCommunication'
-  s.version          = '0.0.5'
+  s.version          = '0.0.7'
   s.summary          = 'HWCommunication.'
 
 # This description is used to generate tags and improve search results.
