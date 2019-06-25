@@ -1,0 +1,16 @@
+PODS:
+  - HWCommunication (0.1.0)
+
+DEPENDENCIES:
+  - HWCommunication (from `../`)
+
+EXTERNAL SOURCES:
+  HWCommunication:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  HWCommunication: 290cb699c0169afc1587668f87e4dadac9195c53
+
+PODFILE CHECKSUM: 0b2272c70ca65b6d12b8f458fc8bd76f5ac6b2c9
+
+COCOAPODS: 1.7.2

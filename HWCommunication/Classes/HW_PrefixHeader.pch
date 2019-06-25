@@ -1,0 +1,65 @@
+//
+//  HW_PrefixHeader.pch
+//  socketTest
+//
+//  Created by mac on 2019/6/13.
+//  Copyright © 2019年 mac. All rights reserved.
+//
+
+
+@import SocketIO;
+#import "RequestUrlConst.h"
+#import "ConfigConstant.h"
+#import "HWLogger.h"
+#import "HWSocketManager.h"
+#import "HWNetWorkManager.h"
+#import "HWRequestUtil.h"
+#import "HWCommunication.h"
+#import "UIColor+Common.h"
+#import "UIImage+Common.h"
+#import "UIView+Common.h"
+#import "NSString+Common.h"
+#import "NSDate+Common.h"
+#import "Masonry.h"
+#import "HWEncryptionUtil.h"
+#import "HWDBManager.h"
+#import "YYModel.h"
+
+#ifdef DEBUG // 处于开发阶段
+#define FLLog(...) NSLog(__VA_ARGS__)
+#else // 处于发布阶段
+#define FLLog(...)
+#endif
+
+
+#define HWUserDefault [NSUserDefaults standardUserDefaults]
+
+
+
+#define FLNotificationCenter [NSNotificationCenter defaultCenter]
+#define kScreenWidth [UIScreen mainScreen].bounds.size.width
+#define kScreenHeight [UIScreen mainScreen].bounds.size.height
+#define kPadding 10.0f
+#define kMargin 15.0f
+#define FLFont(f) [UIFont systemFontOfSize:(f)]
+
+#define kKeyWindow [UIApplication sharedApplication].keyWindow
+#define FLNotificationCenter [NSNotificationCenter defaultCenter]
+// 判断是否是iPhone X
+#define iPhoneX ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) : NO)
+// 状态栏高度
+#define STATUS_BAR_HEIGHT (iPhoneX ? 44.f : 20.f)
+// 导航栏高度
+#define NAVIGATION_BAR_HEIGHT (iPhoneX ? 88.f : 64.f)
+// tabBar高度
+#define TAB_BAR_HEIGHT (iPhoneX ? (49.f+34.f) : 49.f)
+// home indicator
+#define HOME_INDICATOR_HEIGHT (iPhoneX ? 34.f : 0.f)
+
+#define RGBAColor(r, g, b, a) [UIColor colorWithRed:((r)/255.0f) green:((g)/255.0f) blue:((b)/255.0f) alpha:(a)]
+#define FLRandomColor RGBAColor(arc4random()%255, arc4random()%255, arc4random()%255, 1)
+#define FLBackGroundColor   [UIColor colorWithHex:0xefefef]
+#define FLNavBGColor        [UIColor colorWithHex:0xf8f8f8]
+#define FLSecondColor       [UIColor colorWithHex:0x989898]
+#define FLGrayColor         [UIColor colorWithHex:0xaaaaaa]
+#define FLLightGrayColor    [UIColor colorWithHex:0xdfdfdf]

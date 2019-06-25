@@ -1,0 +1,6 @@
+framework module HWCommunication {
+  umbrella header "HWCommunication-umbrella.h"
+
+  export *
+  module * { export * }
+}
