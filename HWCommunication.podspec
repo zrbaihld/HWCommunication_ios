@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'HWCommunication'
-  s.version          = '0.0.1'
+  s.version          = '0.0.3'
   s.summary          = 'HWCommunication.'
 
 # This description is used to generate tags and improve search results.
@@ -47,6 +47,6 @@ TODO: Add long description of the pod here.
   s.dependency 'AgoraRtcEngine_iOS'
   s.static_framework = true
   s.swift_version = '4.2'
-  s.prefix_header_file = 'HWCommention/Classes/HW_PrefixHeader.pch'
-  s.prefix_header_file =false
+  s.prefix_header_file = 'HWCommunication/Classes/HW_PrefixHeader.pch'
+  
 end
