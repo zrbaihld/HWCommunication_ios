@@ -267,7 +267,7 @@ static HWDBManager *instance = nil;
         [self.DBQueue inDatabase:^(FMDatabase * _Nonnull db) {
     
             NSDate *date = [NSDate date];
-            NSNumber *timeStamp = [NSNumber numberWithLongLong:[date timeStamp]];
+            NSNumber *timeStamp = [NSNumber numberWithLongLong:[date timeIntervalSince1970]* 1000];
             FMResultSet *result = [db executeQuery:@"SELECT * FROM (SELECT * FROM message WHERE conversation = ? AND currentTimeMillis < ? ORDER BY currentTimeMillis DESC LIMIT ? OFFSET ?) ORDER BY currentTimeMillis ASC", userName, timeStamp, @(limit), @(limit*page)];
             while (result.next) {
     
