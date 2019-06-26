@@ -7,7 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "AFNetworking.h"
+#import <AFNetworking/AFNetworking.h>
+#import <AFNetworking/AFNetworkActivityIndicatorManager.h>
+
 
 /*！定义请求类型的枚举 */
 typedef NS_ENUM(NSUInteger, HttpRequestType)

@@ -77,7 +77,9 @@
 //    int uid=[[HWCommunication shareManager] mUid];
     NSInteger uid=0;
     @try {
-         uid = [[[HWCommunication shareManager] mUid] intValue];
+        
+         uid = [[HWUserDefault objectForKey:HW_UID] intValue];
+        
     } @catch (NSException *exception) {
         
     } @finally {

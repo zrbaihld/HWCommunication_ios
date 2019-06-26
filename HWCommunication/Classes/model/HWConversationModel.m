@@ -7,6 +7,7 @@
 //
 
 #import "HWConversationModel.h"
+#import "HWChatMessageModel.h"
 
 @implementation HWConversationModel
 

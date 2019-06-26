@@ -7,7 +7,7 @@
 //
 
 #import "HWRequestUtil.h"
-#import "HWNetWorkManager.h"
+
 
 @implementation HWRequestUtil
 

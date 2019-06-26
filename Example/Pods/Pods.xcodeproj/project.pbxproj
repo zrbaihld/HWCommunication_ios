@@ -31,6 +31,9 @@
 		040D1F2B22C228430003AF19 /* HWLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 040D1F0922C228420003AF19 /* HWLogger.h */; };
 		040D1F2C22C228430003AF19 /* HWLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 040D1F0A22C228420003AF19 /* HWLogger.m */; };
 		040D1F2D22C228430003AF19 /* HWCommunication.m in Sources */ = {isa = PBXBuildFile; fileRef = 040D1F0B22C228420003AF19 /* HWCommunication.m */; };
+		040D1F3022C232A80003AF19 /* HWCommunication.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 75B24B1CA0E483ECC6402181C443D12C /* HWCommunication.podspec */; };
+		040D1F3122C232A90003AF19 /* HWCommunication.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 75B24B1CA0E483ECC6402181C443D12C /* HWCommunication.podspec */; };
+		040D1F3222C232AA0003AF19 /* HWCommunication.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 75B24B1CA0E483ECC6402181C443D12C /* HWCommunication.podspec */; };
 		0B81B66A56408372D2BEEC17524909E3 /* HWCommunication-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 571C5F2895087AF2F5266F4D9DBD4626 /* HWCommunication-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1DA1EAA3670D7E3AEA3E5F4338D664D8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */; };
 		31338D7BC47DAA601178A1CB03FB0FE4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */; };
@@ -495,6 +498,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				040D1F3222C232AA0003AF19 /* HWCommunication.podspec in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -502,6 +506,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				040D1F3022C232A80003AF19 /* HWCommunication.podspec in Resources */,
 				040D1F2522C228430003AF19 /* Main.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -510,6 +515,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				040D1F3122C232A90003AF19 /* HWCommunication.podspec in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

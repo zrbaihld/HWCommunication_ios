@@ -8,8 +8,12 @@
 
 #import "HWCommunication.h"
 #import "HWChatMessageModel.h"
+//@class HWChatMessageModel;
 #import "HWMediaUtils.h"
-
+#import "HWRequestUtil.h"
+#import "HWSocketManager.h"
+#import "HWDBManager.h"
+#import "ConfigConstant.h"
 
 static HWCommunication *instance = nil;
 
@@ -21,8 +25,8 @@ static HWCommunication *instance = nil;
 
 @implementation HWCommunication
 
-NSString *hw_key=nil;
-NSString *hw_orgno=nil;
+NSString *hw_key=@"";
+NSString *hw_orgno=@"";
 
 NSString* mPhone;
 NSString* mUid;
@@ -58,7 +62,8 @@ NSString* mUid;
     self.mPhone=phone;
     self.mUid=uid;
     self.mDataBaseName=[[hw_orgno stringByAppendingString:@"_"] stringByAppendingString:self.mUid];
-    
+    [HWUserDefault setObject:self.mDataBaseName forKey:HW_DATABASE];
+    [HWUserDefault setObject:self.mUid forKey:HW_UID];
     [[HWSocketManager shareManager] connect:uid connected:^{
         [HWRequestUtil loginApi:uid name:name uid:uid zone:zone withSuccessBlock:^(id response) {
             if(self.mLoginSuccess!=nil)
@@ -147,7 +152,7 @@ NSString* mUid;
             messageModel.currentTimeMillis=[[NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970]*1000] longLongValue];
             
             [[HWDBManager shareManager] addMessage:messageModel];
-             [[HWDBManager shareManager] addOrUpdateConversationWithMessage:messageModel isChatting:false];
+            [[HWDBManager shareManager] addOrUpdateConversationWithMessage:messageModel isChatting:false];
           [self->_mSocketMessageList removeObjectForKey:[NSString stringWithFormat:@"%@",content[@"id"]]];
         }
     }

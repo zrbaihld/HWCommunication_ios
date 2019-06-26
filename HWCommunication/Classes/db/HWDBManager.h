@@ -6,8 +6,11 @@
 //  Copyright © 2019年 mac. All rights reserved.
 //
 #import <Foundation/Foundation.h>
+#import <FMDB/FMDB.h>
+
 @class HWConversationModel;
 @class HWChatMessageModel;
+
 
 @interface HWDBManager : NSObject
 

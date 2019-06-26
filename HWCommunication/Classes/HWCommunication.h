@@ -5,10 +5,14 @@
 //  Created by mac on 2019/6/13.
 //  Copyright © 2019年 mac. All rights reserved.
 //
-#import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #import <AgoraRtcEngineKit/AgoraRtcEngineKit.h>
 @class HWChatMessageModel;
+@class HWMediaUtils;
+@class HWChatMessageModel;
+@class HWRequestUtil;
+#import "HWNetWorkManager.h" 
+
 
 typedef void( ^ LoginSuccess)(id response);
 typedef void( ^ LoginFaild)(id error);

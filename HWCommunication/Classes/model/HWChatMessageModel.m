@@ -7,6 +7,7 @@
 //
 
 #import "HWChatMessageModel.h"
+#import "HWEncryptionUtil.h"
 
 @implementation HWChatMessageModel
 

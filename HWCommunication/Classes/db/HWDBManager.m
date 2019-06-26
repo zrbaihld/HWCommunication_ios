@@ -8,9 +8,11 @@
 
 
 #import "HWDBManager.h"
-#import <FMDB/FMDB.h>
 #import "HWConversationModel.h"
 #import "HWChatMessageModel.h"
+
+
+
 //#import "FLChatViewController.h"
 static HWDBManager *instance = nil;
 
@@ -24,8 +26,8 @@ static HWDBManager *instance = nil;
 
 #pragma mark - Lazy
 - (FMDatabaseQueue *)DBQueue {
+    NSString *dbName = [NSString stringWithFormat:@"%@.db", [HWUserDefault objectForKey:HW_DATABASE]];
     
-    NSString *dbName = [NSString stringWithFormat:@"%@.db", [HWCommunication shareManager].mDataBaseName];
     NSString *path = _DBQueue.path;
     if (!_DBQueue || ![path containsString:dbName]) {
         NSString *tablePath = [[self DBMianPath] stringByAppendingPathComponent:dbName];

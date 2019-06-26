@@ -8,6 +8,9 @@
 
 #import "HWSocketManager.h"
 #import "HWChatMessageModel.h"
+#import "HWLogger.h"
+
+
 
 static HWSocketManager *instance = nil;
 static SocketManager *manager =nil;

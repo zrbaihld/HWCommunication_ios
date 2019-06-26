@@ -9,4 +9,5 @@
 #define HW_LOOGER_ISDEBUG @"hw_logger_isdebug"
 #define HW_KEY @"hw_key"
 #define HW_ORGNO @"hw_orgno"
-
+#define HW_DATABASE @"hw_database"
+#define HW_UID @"hw_uid"

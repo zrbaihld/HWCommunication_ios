@@ -7,8 +7,10 @@
 //
 
 #import "HWNetWorkManager.h"
-#import "AFNetworkActivityIndicatorManager.h"
+#import "HWSocketManager.h"
+#import "HWLogger.h"
 #import "HWEncryptionUtil.h"
+#import "HWRequestUtil.h"
 
 @implementation HWNetWorkManager
 

@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "HWChatMessageModel.h"
+@class HWChatMessageModel;
 
 
 

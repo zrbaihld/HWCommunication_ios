@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AgoraRtcEngineKit/AgoraRtcEngineKit.h>
+#import "HWLogger.h"
 typedef void( ^ UserJoinChannel)(NSString* uid);
 
 typedef UIView*( ^ GetLocalView)(void);

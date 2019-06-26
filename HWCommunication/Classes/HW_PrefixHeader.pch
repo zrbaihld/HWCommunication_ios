@@ -10,15 +10,23 @@
 @import SocketIO;
 #import "RequestUrlConst.h"
 #import "ConfigConstant.h"
-#import "HWLogger.h"
-#import "HWSocketManager.h"
-#import "HWNetWorkManager.h"
-#import "HWRequestUtil.h"
-#import "HWCommunication.h"
-#import "Masonry.h"
-#import "HWEncryptionUtil.h"
-#import "HWDBManager.h"
-#import "YYModel.h"
+//#import "HWLogger.h"
+//#import "HWSocketManager.h"
+//#import "HWNetWorkManager.h"
+//#import "HWRequestUtil.h"
+//#import "HWCommunication.h"
+//#import "HWEncryptionUtil.h"
+//#import "HWDBManager.h"
+//@class HWLogger;
+//@class HWSocketManager;
+//@class HWNetWorkManager;
+//@class HWRequestUtil;
+//@class HWCommunication;
+//@class HWEncryptionUtil;
+//@class HWDBManager;
+
+#import <YYModel/YYModel.h>
+#import <Masonry/Masonry.h>
 
 #ifdef DEBUG // 处于开发阶段
 #define FLLog(...) NSLog(__VA_ARGS__)
