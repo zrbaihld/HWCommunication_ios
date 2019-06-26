@@ -11,7 +11,7 @@
 @class HWMediaUtils;
 @class HWChatMessageModel;
 @class HWRequestUtil;
-#import "HWNetWorkManager.h" 
+#import "HWNetWorkManager.h"
 
 
 typedef void( ^ LoginSuccess)(id response);
@@ -40,37 +40,37 @@ extern NSString* hw_orgno;
 @property (nonatomic,copy)NSString* mUid;
 @property (nonatomic,copy)NSString* mDataBaseName;
 
-@property (nonatomic,copy)LoginSuccess mLoginSuccess;
-@property (nonatomic,copy)LoginFaild mLoginFaild;
-@property (nonatomic,copy)NewMessage mNewMessage;
-@property (nonatomic,copy)RefuseConnectApply mRefuseConnectApply;
-@property (nonatomic,copy)ApplyFriend mApplyFriend;
-@property (nonatomic,copy)ApplyFriendAgree mApplyFriendAgree;
-@property (nonatomic,copy)ApplyFriendRefuce mApplyFriendRefuce;
-@property (nonatomic,copy)ApplyConnect mApplyConnect;
-@property (nonatomic,copy)ChatRoomNewMessageModel mChatRoomNewMessageModel;
-@property (nonatomic,copy)UnLineMessageBackSuccess mUnLineMessageBackSuccess;
-@property (nonatomic,copy)UnLineMessageBackFaild mUnLineMessageBackFaild;
+@property (nonatomic,copy)LoginSuccess mLoginSuccess;//登录成功回调
+@property (nonatomic,copy)LoginFaild mLoginFaild;//登录失败
+@property (nonatomic,copy)NewMessage mNewMessage;//有新消息回调
+@property (nonatomic,copy)RefuseConnectApply mRefuseConnectApply;//拒绝连接请求回调
+@property (nonatomic,copy)ApplyFriend mApplyFriend;//有好友发起申请
+@property (nonatomic,copy)ApplyFriendAgree mApplyFriendAgree;//好友申请通过
+@property (nonatomic,copy)ApplyFriendRefuce mApplyFriendRefuce;//好友申请拒绝
+@property (nonatomic,copy)ApplyConnect mApplyConnect;//请求语音/视频聊天
+@property (nonatomic,copy)ChatRoomNewMessageModel mChatRoomNewMessageModel;//聊天室中有新消息
+@property (nonatomic,copy)UnLineMessageBackSuccess mUnLineMessageBackSuccess;w//获取未读消息回调
+@property (nonatomic,copy)UnLineMessageBackFaild mUnLineMessageBackFaild;//获取唯独消息失败回调
 
-@property (nonatomic,copy)GetLocalView mLocalView;
-@property (nonatomic,copy)GetLocalView mRemoteVideo;
+@property (nonatomic,copy)GetLocalView mLocalView;//本人视频展示VIEW
+@property (nonatomic,copy)GetLocalView mRemoteVideo;//聊天视频对象VIEW
 
 @property (nonatomic,strong)NSMutableDictionary* mSocketMessageList;
 
 
-+ (instancetype)shareManager;
-+ (void)initConfig:(NSString*)key_p orgno:(NSString*)orgno_p ;
++ (instancetype)shareManager;//单例获取对象
++ (void)initConfig:(NSString*)key_p orgno:(NSString*)orgno_p ;//初始化
 
--(void)login:(NSString*)phone name:(NSString*)name uid:(NSString*)uid zone:(NSString*)zone;
--(void)login:(NSString*)phone name:(NSString*)name uid:(NSString*)uid;
+-(void)login:(NSString*)phone name:(NSString*)name uid:(NSString*)uid zone:(NSString*)zone;//登录 zone 为手机区号 默认是86
+-(void)login:(NSString*)phone name:(NSString*)name uid:(NSString*)uid;//登录
 
--(void)refuceConnect:(NSString*)msgId withSuccessBlock:(ResponseSuccess)successBlock withFailureBlock:(ResponseFail)failureBlock;
+-(void)refuceConnect:(NSString*)msgId withSuccessBlock:(ResponseSuccess)successBlock withFailureBlock:(ResponseFail)failureBlock;//拒绝通讯 msgId 为通讯消息的id
 
--(void)getUnLineAllMessageList:(ResponseSuccess)successBlock withFailureBlock:(ResponseFail)failureBlock;
+-(void)getUnLineAllMessageList:(ResponseSuccess)successBlock withFailureBlock:(ResponseFail)failureBlock;//获取离线消息列表
 
--(void)getConversationList:(DataBaseBack)dataBack;
--(void)getChatMessageByUid:(DataBaseBack)dataBack;
--(void)getChatMessageByUid:(DataBaseBack)dataBack messageId:(NSString*)msgId;
+-(void)getConversationList:(DataBaseBack)dataBack;//获取对话列表
+-(void)getChatMessageByUid:(DataBaseBack)dataBack;//获取k聊天消息列表
+-(void)getChatMessageByUid:(DataBaseBack)dataBack messageId:(NSString*)msgId;t//通过uid 获取聊天消息列表
 
 /**
  查询用户
@@ -136,14 +136,14 @@ extern NSString* hw_orgno;
 -(void)deletFriend:(NSString*)uid withSuccessBlock:(ResponseSuccess)successBlock withFailureBlock:(ResponseFail)failureBlock;
 
 
--(void)uploadFile:(NSDictionary *)parameters imageData:(NSData *)imageData withSuccessBlock:(ResponseSuccess)successBlock withFailurBlock:(ResponseFail)failureBlock withUpLoadProgress:(UploadProgress)progress;
+-(void)uploadFile:(NSDictionary *)parameters imageData:(NSData *)imageData withSuccessBlock:(ResponseSuccess)successBlock withFailurBlock:(ResponseFail)failureBlock withUpLoadProgress:(UploadProgress)progress;//上传文件
 
--(void)leaveChannel;
-- (int)switchCamera;
-- (int)muteLocalAudioStream:(BOOL)mute;
-- (int)muteLocalVideoStream:(BOOL)mute;
-- (void)setDebug:(BOOL)debug;
-- (void)joinChannel:(NSString*)msgID type:(NSString*)type;
--(void)joinChannel:(NSString*)msgID type:(NSString*)type config:(nullable AgoraVideoEncoderConfiguration*)encoderConfiguration;
+-(void)leaveChannel;//离开频道
+- (int)switchCamera;//切换摄像头（前置/后置）
+- (int)muteLocalAudioStream:(BOOL)mute;//视频开关
+- (int)muteLocalVideoStream:(BOOL)mute;//音频开关
+- (void)setDebug:(BOOL)debug;//是否开启调试模式的日志 （默认关闭）
+- (void)joinChannel:(NSString*)msgID type:(NSString*)type;//加入频道
+-(void)joinChannel:(NSString*)msgID type:(NSString*)type config:(nullable AgoraVideoEncoderConfiguration*)encoderConfiguration;//加入频道 config 是配置文件
 NS_ASSUME_NONNULL_END
 @end

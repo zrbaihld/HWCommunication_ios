@@ -15,8 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface HWEncryptionUtil : NSObject
 +(id)encryption:(NSDictionary *)parameters;
 +(NSString*)getmd5WithString:(NSString *)string;
-+(NSString*)getEncodeString:(NSString *)string;
-+(NSString*)getDecoderString:(NSString *)string;
++(NSString*)getEncodeString:(NSString *)string;//获取message加密以后文本
++(NSString*)getDecoderString:(NSString *)string;//获取message解密以后文本
 @end
 
 NS_ASSUME_NONNULL_END
