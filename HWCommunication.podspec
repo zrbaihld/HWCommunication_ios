@@ -34,7 +34,7 @@ TODO: Add long description of the pod here.
 
   s.resource_bundles = {
   #   'HWCommunication' => ['HWCommunication/Assets/*.png']
-      'HWCommunication' => ['HWCommunication/*.cer']
+      'HWCommunication' => ['*.cer']
    }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
