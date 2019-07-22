@@ -112,7 +112,9 @@
 
 +(SecKeyRef)getPublicKeyRef{
     
-    NSString * path = [[NSBundle mainBundle] pathForResource:@"21001435.cer" ofType:nil];
+    NSString * path =[[NSBundle bundleForClass:[self class]].resourcePath
+                      stringByAppendingPathComponent:@"21001435.cer"];
+    
     NSData *certData = [NSData dataWithContentsOfFile:path];
     
     if (!certData) {

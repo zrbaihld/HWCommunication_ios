@@ -34,7 +34,6 @@ TODO: Add long description of the pod here.
 
   s.resource_bundles = {
   #   'HWCommunication' => ['HWCommunication/Assets/*.png']
-      'HWCommunication' => ['*.cer']
       'HWCommunication' => ['HWCommunication/*.cer']
    }
 
