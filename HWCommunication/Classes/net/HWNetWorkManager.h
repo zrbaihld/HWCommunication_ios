@@ -71,6 +71,5 @@ typedef void( ^ DownloadProgress)(CGFloat);
 #pragma mark - 文件下载
 + (NSURLSessionDownloadTask *)downLoadWithUrl:(NSString *)url progress:(DownloadProgress)progress success:(ResponseSuccess)success fail:(ResponseFail)fail;
 
-
 @end
 

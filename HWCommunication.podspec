@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'HWCommunication'
-  s.version          = '0.0.8'
+  s.version          = '0.0.9'
   s.summary          = 'HWCommunication.'
 
 # This description is used to generate tags and improve search results.
@@ -31,10 +31,11 @@ TODO: Add long description of the pod here.
   s.ios.deployment_target = '8.0'
 
   s.source_files = 'HWCommunication/Classes/**/*'
-  
-  # s.resource_bundles = {
+
+  s.resource_bundles = {
   #   'HWCommunication' => ['HWCommunication/Assets/*.png']
-  # }
+      'HWCommunication' => ['*.cer']
+   }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   s.frameworks = 'UIKit', 'Foundation'

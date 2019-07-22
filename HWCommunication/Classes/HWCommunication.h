@@ -49,7 +49,7 @@ extern NSString* hw_orgno;
 @property (nonatomic,copy)ApplyFriendRefuce mApplyFriendRefuce;//好友申请拒绝
 @property (nonatomic,copy)ApplyConnect mApplyConnect;//请求语音/视频聊天
 @property (nonatomic,copy)ChatRoomNewMessageModel mChatRoomNewMessageModel;//聊天室中有新消息
-@property (nonatomic,copy)UnLineMessageBackSuccess mUnLineMessageBackSuccess;w//获取未读消息回调
+@property (nonatomic,copy)UnLineMessageBackSuccess mUnLineMessageBackSuccess;//获取未读消息回调
 @property (nonatomic,copy)UnLineMessageBackFaild mUnLineMessageBackFaild;//获取唯独消息失败回调
 
 @property (nonatomic,copy)GetLocalView mLocalView;//本人视频展示VIEW
@@ -70,7 +70,7 @@ extern NSString* hw_orgno;
 
 -(void)getConversationList:(DataBaseBack)dataBack;//获取对话列表
 -(void)getChatMessageByUid:(DataBaseBack)dataBack;//获取k聊天消息列表
--(void)getChatMessageByUid:(DataBaseBack)dataBack messageId:(NSString*)msgId;t//通过uid 获取聊天消息列表
+-(void)getChatMessageByUid:(DataBaseBack)dataBack messageId:(NSString*)msgId;//通过uid 获取聊天消息列表
 
 /**
  查询用户

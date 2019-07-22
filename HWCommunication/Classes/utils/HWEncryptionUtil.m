@@ -7,7 +7,8 @@
 //
 
 #import "HWEncryptionUtil.h"
-
+#import <CommonCrypto/CommonDigest.h>
+#import <CommonCrypto/CommonCryptor.h>
 
 @implementation HWEncryptionUtil
 
@@ -68,13 +69,202 @@
 //    hString2=[hString2 stringByReplacingOccurrencesOfString:@"+" withString:@"%20"];
     return hString2;
 }
-+(NSString*)getDecoderString:(NSString *)string{
 
++(NSString*)getDecoderString:(NSString *)string{
+    
     string=[string stringByReplacingOccurrencesOfString:@"+" withString:@"%2B"];
     
     return [string stringByRemovingPercentEncoding];
 }
 
+
++(NSString *)encryptString:(NSString *)originalString{
+    
+    if (!originalString)
+        return nil;
+    SecKeyRef publicKey = [self getPublicKeyRef];
+    size_t cipherBufferSize = SecKeyGetBlockSize(publicKey);
+    uint8_t *cipherBuffer = malloc(cipherBufferSize);
+    uint8_t *nonce = (uint8_t *) [originalString UTF8String];
+    
+    SecKeyEncrypt(publicKey,
+                  kSecPaddingPKCS1,
+                  nonce,
+                  strlen((char *) nonce),
+                  &cipherBuffer[0],
+                  &cipherBufferSize);
+    NSData *encryptedData = [NSData dataWithBytes:cipherBuffer length:cipherBufferSize];
+    free(cipherBuffer);
+    
+    return [encryptedData base64EncodedStringWithOptions:0];
+    
+}
+
++(NSString *)decryptString:(NSString *)ciphertextString{
+    
+    
+    return @"";
+    ;
+    
+}
+
+//获取公钥
+
++(SecKeyRef)getPublicKeyRef{
+    
+    NSString * path = [[NSBundle mainBundle] pathForResource:@"21001435.cer" ofType:nil];
+    NSData *certData = [NSData dataWithContentsOfFile:path];
+    
+    if (!certData) {
+        return nil;
+    }
+    
+    SecCertificateRef cert = SecCertificateCreateWithData(NULL, (CFDataRef)certData);
+    
+    SecKeyRef publicKey = NULL;
+    SecTrustRef trust = NULL;
+    SecPolicyRef policy = NULL;
+    
+    if (cert != NULL) {
+        policy = SecPolicyCreateBasicX509();
+        if (policy) {
+            if (SecTrustCreateWithCertificates((CFTypeRef)cert, policy, &trust) == noErr) {
+                SecTrustResultType result;
+                if (SecTrustEvaluate(trust, &result) == noErr) {
+                    publicKey = SecTrustCopyPublicKey(trust);
+                }
+            }
+        }
+    }
+    
+    if (policy) CFRelease(policy);
+    if (trust) CFRelease(trust);
+    if (cert) CFRelease(cert);
+    
+    return publicKey;
+}
+
+
+NSString *const kInitVector = @"16-Bytes--String";
+size_t const kKeySize = kCCKeySizeAES128;
+
++ (NSString *)encryptAES:(NSString *)content key:(NSString *)key {
+    
+    NSData *contentData = [content dataUsingEncoding:NSUTF8StringEncoding];
+    NSUInteger dataLength = contentData.length;
+    
+    // 为结束符'\0' +1
+    char keyPtr[kKeySize + 1];
+    memset(keyPtr, 0, sizeof(keyPtr));
+    [key getCString:keyPtr maxLength:sizeof(keyPtr) encoding:NSUTF8StringEncoding];
+    
+    // 密文长度 <= 明文长度 + BlockSize
+    size_t encryptSize = dataLength + kCCBlockSizeAES128;
+    void *encryptedBytes = malloc(encryptSize);
+    size_t actualOutSize = 0;
+    
+    NSData *initVector = [kInitVector dataUsingEncoding:NSUTF8StringEncoding];
+    
+    CCCryptorStatus cryptStatus = CCCrypt(kCCEncrypt,
+                                          kCCAlgorithmAES,
+                                          kCCOptionPKCS7Padding|kCCOptionECBMode,  // 系统默认使用 CBC，然后指明使用 PKCS7Padding
+                                          keyPtr,
+                                          kKeySize,
+                                          initVector.bytes,
+                                          contentData.bytes,
+                                          dataLength,
+                                          encryptedBytes,
+                                          encryptSize,
+                                          &actualOutSize);
+    
+    if (cryptStatus == kCCSuccess) {
+        // 对加密后的数据进行 base64 编码
+        NSData* data= [NSData dataWithBytesNoCopy:encryptedBytes length:actualOutSize];
+        return [HWEncryptionUtil hexStringFromData:data];
+    }
+    free(encryptedBytes);
+    return nil;
+}
+
+
+// 普通字符串转换为十六进
++ (NSString *)hexStringFromData:(NSData *)data {
+    Byte *bytes = (Byte *)[data bytes];
+    // 下面是Byte 转换为16进制。
+    NSString *hexStr = @"";
+    for(int i=0; i<[data length]; i++) {
+        NSString *newHexStr = [NSString stringWithFormat:@"%x",bytes[i] & 0xff]; //16进制数
+        newHexStr = [newHexStr uppercaseString];
+        
+        if([newHexStr length] == 1) {
+            newHexStr = [NSString stringWithFormat:@"0%@",newHexStr];
+        }
+        
+        hexStr = [hexStr stringByAppendingString:newHexStr];
+        
+    }
+    return hexStr;
+}
+
+
+//参考：http://blog.csdn.net/linux_zkf/article/details/17124577
+//十六进制转Data
++ (NSData*)dataForHexString:(NSString*)hexString
+{
+    if (hexString == nil) {
+        
+        return nil;
+    }
+    
+    const char* ch = [[hexString lowercaseString] cStringUsingEncoding:NSUTF8StringEncoding];
+    NSMutableData* data = [NSMutableData data];
+    while (*ch) {
+        if (*ch == ' ') {
+            continue;
+        }
+        char byte = 0;
+        if ('0' <= *ch && *ch <= '9') {
+            
+            byte = *ch - '0';
+        }else if ('a' <= *ch && *ch <= 'f') {
+            
+            byte = *ch - 'a' + 10;
+        }else if ('A' <= *ch && *ch <= 'F') {
+            
+            byte = *ch - 'A' + 10;
+            
+        }
+        
+        ch++;
+        
+        byte = byte << 4;
+        
+        if (*ch) {
+            
+            if ('0' <= *ch && *ch <= '9') {
+                
+                byte += *ch - '0';
+                
+            } else if ('a' <= *ch && *ch <= 'f') {
+                
+                byte += *ch - 'a' + 10;
+                
+            }else if('A' <= *ch && *ch <= 'F'){
+                
+                byte += *ch - 'A' + 10;
+                
+            }
+            
+            ch++;
+            
+        }
+        
+        [data appendBytes:&byte length:1];
+        
+    }
+    
+    return data;
+}
 
 
 @end

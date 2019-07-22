@@ -123,6 +123,7 @@
     if(parameters!=nil){
         parameters=[HWNetWorkManager getBaseNSDictionary:parameters];
         parameters=[HWEncryptionUtil encryption:parameters];
+           parameters=[HWNetWorkManager getRSAEncryptMapPublic:parameters];
     }
     
     if ([HWNetWorkManager shareManager].netWorkStatus == NetworkStatusNotReachable) {   //没有网络
@@ -335,6 +336,66 @@
     [parameters setValue:hw_orgno forKey:@"orgno"];
     return parameters;
 }
++(id)getRSAEncryptMapPublic:(NSMutableDictionary *)parameters{
+    NSMutableDictionary* encryptParameters=[NSMutableDictionary new];
+    [parameters removeObjectForKey:@"orgno"];
+    
+     extern NSString* hw_orgno;
+    [encryptParameters setValue:hw_orgno forKey:@"orgno"];
+    
+    NSString* preEncrypt=[NSString new];
+    for (NSString *key in parameters) {
+        preEncrypt= [preEncrypt stringByAppendingString:[NSString stringWithFormat:@"&%@=%@",key,parameters[key]]];
+        
+    }
+    NSString* CUIDStr=[HWNetWorkManager getRandomStr];
+    NSString* randomaeskey=[HWEncryptionUtil encryptString:CUIDStr];
+    //    NSString* bizsigndata= [[HWEncryptionUtil AES128_Encrypt:CUIDStr encryptData:[preEncrypt dataUsingEncoding:NSUTF8StringEncoding]] base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
+    
+    NSString* bizsigndata=[HWEncryptionUtil encryptAES:preEncrypt key:CUIDStr];
+    
+    [encryptParameters setValue:bizsigndata forKey:@"bizsigndata"];
+    [encryptParameters setValue:randomaeskey forKey:@"randomaeskey"];
+    
+    NSDate* dat = [NSDate dateWithTimeIntervalSinceNow:0];
+    NSTimeInterval a=[dat timeIntervalSince1970];
+    NSString* timeString = [NSString stringWithFormat:@"%0.f", a];
+    [encryptParameters setValue:timeString forKey:@"timestamp"];
+    
+    return encryptParameters;
+}
+
++(NSString *)getRandomStr{
+    int length=16;
+    char data[length];
+    for (int x=0;x < length;data[x++] = (char)('A' + (arc4random_uniform(26))));
+    NSString *randomStr = [[NSString alloc] initWithBytes:data length:length encoding:NSUTF8StringEncoding];
+    NSString *string = [NSString stringWithFormat:@"%@",randomStr];
+    return string;}
+
+//public static Map<String, String> getEncryptMapPublic(Map<String, String> stringMap) {
+//    Map<String, String> resultMap=new HashMap<>();
+//    stringMap.remove("orgno");
+//
+//    StringBuilder strParm = new StringBuilder();
+//    for (String s : stringMap.keySet()) {
+//        strParm.append("&")
+//        .append(s)
+//        .append("=")
+//        .append(stringMap.get(s));
+//    }
+//    try {
+//        byte[] CUIDStr=getGUID().getBytes();
+//        String randomaeskey=new String(Base64.encode(encryptByPublicKeyForSpilt(CUIDStr),Base64.NO_WRAP));
+//        resultMap.put("randomaeskey",randomaeskey);
+//        resultMap.put("bizsigndata",encryptAES2HexString(strParm.toString().getBytes(),CUIDStr));
+//    } catch (Exception e) {
+//        e.printStackTrace();
+//    }
+//    resultMap.put("orgno",API.orgno);
+//    resultMap.put("timestamp",System.currentTimeMillis()+"");
+//    return resultMap;
+//}
 
 
 @end
