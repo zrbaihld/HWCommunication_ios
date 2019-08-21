@@ -34,6 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 + (NSString *)encryptAES:(NSString *)content key:(NSString *)key;
++ (NSData *)decodeAES:(NSString *)content key:(NSString *)key;
 @end
 
 NS_ASSUME_NONNULL_END

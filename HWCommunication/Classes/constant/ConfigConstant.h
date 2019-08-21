@@ -11,3 +11,6 @@
 #define HW_ORGNO @"hw_orgno"
 #define HW_DATABASE @"hw_database"
 #define HW_UID @"hw_uid"
+#define HW_BASE_URL @"hw_base_url"
+#define HW_CER_NAME @"hw_cer_name"
+#define HW_LOGIN_DATA @"hw_login_data"

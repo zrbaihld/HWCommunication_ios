@@ -153,9 +153,9 @@
 }
 
 +(void)uploadFile:(NSDictionary *)parameters imageData:(NSData *)imageData withSuccessBlock:(ResponseSuccess)successBlock withFailurBlock:(ResponseFail)failureBlock withUpLoadProgress:(UploadProgress)progress{
+
     
-    
-     [HWNetWorkManager ba_uploadImageWithUrlString:HW_UPLOAD_FILE parameters:parameters imageData:imageData withSuccessBlock:successBlock withFailurBlock:failureBlock withUpLoadProgress:progress];
+     [[HWNetWorkManager shareManager] ba_uploadImageWithUrlString:HW_UPLOAD_FILE parameters:parameters imageData:imageData withSuccessBlock:successBlock withFailurBlock:failureBlock withUpLoadProgress:progress];
 }
 
 @end

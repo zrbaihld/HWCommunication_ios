@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) SocketManager *manager;
 
 + (instancetype)shareManager;
-- (void)connect:(NSString*)uid connected:(void(^)(void))connected newMsg:(void(^)(NSArray* data, SocketAckEmitter* ack))newMsg;
+- (void)connect:socketUrl uid:(NSString*)uid connected:(void(^)(void))connected newMsg:(void(^)(NSArray* data, SocketAckEmitter* ack))newMsg;
 
 @end
 

@@ -32,10 +32,10 @@ static SocketManager *manager =nil;
     return instance;
 }
 
-- (void)connect:(NSString*)uid connected:(void(^)(void))connected newMsg:(void (^)(NSArray* data, SocketAckEmitter* ack))newMsg{
+- (void)connect:socketUrl uid:(NSString*)uid connected:(void(^)(void))connected newMsg:(void (^)(NSArray* data, SocketAckEmitter* ack))newMsg{
     
     
-    NSURL* url = [[NSURL alloc] initWithString:HW_SocketUrl];
+    NSURL* url = [[NSURL alloc] initWithString:socketUrl];
     
     /**
      log 是否打印日志

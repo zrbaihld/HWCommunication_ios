@@ -50,7 +50,7 @@ typedef void( ^ DownloadProgress)(CGFloat);
 
 /*! 获取当前网络状态 */
 @property (nonatomic, assign) NetworkStatus  netWorkStatus;
-
++ (instancetype)shareManager ;
 /*!
  *  网络请求方法,block回调
  *
@@ -67,7 +67,8 @@ typedef void( ^ DownloadProgress)(CGFloat);
                         withFailureBlock:(ResponseFail)failureBlock;
 
 #pragma mark - 图片上传
-+ (NSURLSessionTask *)ba_uploadImageWithUrlString:(NSString *)urlString parameters:(NSDictionary *)parameters imageData:(NSData *)imageData withSuccessBlock:(ResponseSuccess)successBlock withFailurBlock:(ResponseFail)failureBlock withUpLoadProgress:(UploadProgress)progress;
+- (void)ba_uploadImageWithUrlString:(NSString *)urlString parameters:(NSDictionary *)parameters imageData:(NSData *)imageData withSuccessBlock:(ResponseSuccess)successBlock withFailurBlock:(ResponseFail)failureBlock withUpLoadProgress:(UploadProgress)progress;
++ (NSURLSessionTask *)ba_uploadImageWithUrlString2:(NSString *)urlString parameters:(NSDictionary *)parameters imageData:(NSData *)imageData withSuccessBlock:(ResponseSuccess)successBlock withFailurBlock:(ResponseFail)failureBlock withUpLoadProgress:(UploadProgress)progress;
 #pragma mark - 文件下载
 + (NSURLSessionDownloadTask *)downLoadWithUrl:(NSString *)url progress:(DownloadProgress)progress success:(ResponseSuccess)success fail:(ResponseFail)fail;
 

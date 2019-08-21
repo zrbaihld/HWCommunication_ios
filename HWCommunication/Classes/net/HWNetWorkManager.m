@@ -11,7 +11,16 @@
 #import "HWLogger.h"
 #import "HWEncryptionUtil.h"
 #import "HWRequestUtil.h"
+#import <AliyunOSSiOS/OSSService.h>
+#import "HWCommunication.h"
 
+@interface HWNetWorkManager ()
+
+@property (nonatomic, strong) OSSPutObjectRequest *put;
+
+@property (nonatomic, strong) OSSClient *ossClient;
+
+@end
 @implementation HWNetWorkManager
 
 + (instancetype)shareManager {
@@ -121,9 +130,9 @@
         return nil;
     }
     if(parameters!=nil){
-        parameters=[HWNetWorkManager getBaseNSDictionary:parameters];
-        parameters=[HWEncryptionUtil encryption:parameters];
-           parameters=[HWNetWorkManager getRSAEncryptMapPublic:parameters];
+        parameters=[HWNetWorkManager getBaseNSDictionary:parameters];//加公共参数
+        parameters=[HWEncryptionUtil encryption:parameters];//加Sign签名
+        parameters=[HWNetWorkManager getRSAEncryptMapPublic:parameters];//rsa加密
     }
     
     if ([HWNetWorkManager shareManager].netWorkStatus == NetworkStatusNotReachable) {   //没有网络
@@ -133,10 +142,11 @@
     
     /*! 检查地址中是否有中文 */
     NSString *URLString = [NSURL URLWithString:urlString] ? urlString : [self strUTF8Encoding:urlString];
+    NSString *BASEString= [HWUserDefault stringForKey:HW_BASE_URL];
     
     FLLog(@"******************** 请求参数 ***************************");
     FLLog(@"请求头: %@\n请求方式: %@\n请求URL: %@\n请求param: %@\n\n",
-          [self sharedAFManager].requestSerializer.HTTPRequestHeaders, (type == Get) ? @"GET":@"POST",[NSMutableString stringWithFormat:@"%@/%@",HW_BaseUrl,URLString], parameters);
+          [self sharedAFManager].requestSerializer.HTTPRequestHeaders, (type == Get) ? @"GET":@"POST",[NSMutableString stringWithFormat:@"%@/%@",BASEString,URLString], parameters);
     FLLog(@"******************************************************");
     
     NSURLSessionTask *sessionTask = nil;
@@ -144,14 +154,14 @@
     if (type == Get)
     {
         
-        sessionTask = [[self sharedAFManager] GET:[NSMutableString stringWithFormat:@"%@/%@",HW_BaseUrl,URLString] parameters:parameters  progress:^(NSProgress * _Nonnull downloadProgress) {
+        sessionTask = [[self sharedAFManager] GET:[NSMutableString stringWithFormat:@"%@/%@",BASEString,URLString] parameters:parameters  progress:^(NSProgress * _Nonnull downloadProgress) {
             
         } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
             
             
             if (successBlock)
             {
-            
+                
                 successBlock(responseObject);
             }
             
@@ -169,7 +179,7 @@
     }
     else if (type == Post)
     {
-        sessionTask = [[self sharedAFManager] POST:[NSMutableString stringWithFormat:@"%@/%@",HW_BaseUrl,URLString] parameters:parameters progress:^(NSProgress * _Nonnull uploadProgress) {
+        sessionTask = [[self sharedAFManager] POST:[NSMutableString stringWithFormat:@"%@/%@",BASEString,URLString] parameters:parameters progress:^(NSProgress * _Nonnull uploadProgress) {
             
         } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
             
@@ -177,7 +187,15 @@
             if (successBlock)
             {
                 [HWLogger LogResponse:responseObject];
-                successBlock(responseObject);
+                if(responseObject[@"status"]){
+                      successBlock(responseObject);
+                }else{
+                    if (failureBlock)
+                    {
+                        failureBlock(responseObject);
+                    }
+                }
+              
             }
             
             
@@ -196,12 +214,63 @@
 }
 
 #pragma mark - 图片上传
-+ (NSURLSessionTask *)ba_uploadImageWithUrlString:(NSString *)urlString parameters:(NSDictionary *)parameters imageData:(NSData *)imageData withSuccessBlock:(ResponseSuccess)successBlock withFailurBlock:(ResponseFail)failureBlock withUpLoadProgress:(UploadProgress)progress {
-    if (urlString == nil)
-    {
+- (void)ba_uploadImageWithUrlString:(NSString *)urlString parameters:(NSDictionary *)parameters imageData:(NSData *)imageData withSuccessBlock:(ResponseSuccess)successBlock withFailurBlock:(ResponseFail)failureBlock withUpLoadProgress:(UploadProgress)progress {
+    id loginEntity=[[HWCommunication shareManager] getLoginEntity];
+    NSString* accessKeyId=loginEntity[@"accessKeyId"];
+    NSString* accessKeySecret=loginEntity[@"accessKeySecret"];
+    NSString* endpoint=loginEntity[@"endpoint"];
+    NSString* bucketName=loginEntity[@"bucketName"];
+    
+    id<OSSCredentialProvider> credential = [[OSSStsTokenCredentialProvider alloc] initWithAccessKeyId:accessKeyId secretKeyId:accessKeySecret securityToken:@""];
+    _ossClient=[[OSSClient alloc] initWithEndpoint:endpoint credentialProvider:credential];
+
+
+    _put = [OSSPutObjectRequest new];
+    // 必填字段
+    _put.bucketName = bucketName;
+     NSDate* dat = [NSDate dateWithTimeIntervalSinceNow:0];
+    NSTimeInterval a=[dat timeIntervalSince1970];
+    NSString* timeString = [NSString stringWithFormat:@"%0.f", a];
+    NSString *objectKey = [[HWNetWorkManager getRandomStr] stringByAppendingString:timeString];
+    _put.objectKey = objectKey;
+//    put.uploadingFileURL = [NSURL fileURLWithPath:@"<filepath>"];
+     _put.uploadingData = imageData; // 直接上传NSData
+    // 可选字段，可不设置
+    _put.uploadProgress = ^(int64_t bytesSent, int64_t totalByteSent, int64_t totalBytesExpectedToSend) {
+        // 当前上传段长度、当前已经上传总长度、一共需要上传的总长度
+        NSLog(@"%lld, %lld, %lld", bytesSent, totalByteSent, totalBytesExpectedToSend);
+    };
+    // 以下可选字段的含义参考： https://docs.aliyun.com/#/pub/oss/api-reference/object&PutObject
+    // put.contentType = @"";
+    // put.contentMd5 = @"";
+    // put.contentEncoding = @"";
+    // put.contentDisposition = @"";
+    // put.objectMeta = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"value1", @"x-oss-meta-name1", nil]; // 可以在上传时设置元信息或者其他HTTP头部
+    OSSTask * putTask = [_ossClient putObject:_put];
+    [putTask continueWithBlock:^id(OSSTask *task) {
+        if (!task.error) {
+            if (successBlock)
+            {
+                successBlock(objectKey);
+            }
+        } else {
+            if (failureBlock)
+            {
+                failureBlock(task.error);
+            }
+            
+        }
+        return nil;
+    }];
+
+    
+}
+#pragma mark - 图片上传
++ (NSURLSessionTask *)ba_uploadImageWithUrlString2:(NSString *)urlString parameters:(NSDictionary *)parameters imageData:(NSData *)imageData withSuccessBlock:(ResponseSuccess)successBlock withFailurBlock:(ResponseFail)failureBlock withUpLoadProgress:(UploadProgress)progress {
+    if(urlString==nil){
         return nil;
     }
-    
+   
     
     [self sharedAFManager].requestSerializer.timeoutInterval = 25;
     /*! 检查地址中是否有中文 */
@@ -211,6 +280,7 @@
     NSString *fileName = parameters[@"imageFileName"];
     NSURLSessionTask *sessionTask = nil;
     __weak typeof(self) weakSelf = self;
+    
     sessionTask = [[self sharedAFManager] POST:[NSMutableString stringWithFormat:@"%@/%@",HW_BaseUrl,URLString] parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         
         
@@ -340,7 +410,7 @@
     NSMutableDictionary* encryptParameters=[NSMutableDictionary new];
     [parameters removeObjectForKey:@"orgno"];
     
-     extern NSString* hw_orgno;
+    extern NSString* hw_orgno;
     [encryptParameters setValue:hw_orgno forKey:@"orgno"];
     
     NSString* preEncrypt=[NSString new];

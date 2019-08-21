@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'HWCommunication'
-  s.version          = '0.1.2'
+  s.version          = '0.1.3'
   s.summary          = 'HWCommunication.'
 
 # This description is used to generate tags and improve search results.
@@ -46,6 +46,8 @@ TODO: Add long description of the pod here.
   s.dependency 'Masonry', '~> 1.1.0'
   s.dependency 'YYModel', '~> 1.0.4'
   s.dependency 'AgoraRtcEngine_iOS', '~> 2.4.0.1'
+  s.dependency 'AliyunOSSiOS' , '~> 2.10.7'
+
   s.static_framework = true
   s.swift_version = '4.2'
   s.prefix_header_file = 'HWCommunication/Classes/HW_PrefixHeader.pch'

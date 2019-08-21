@@ -112,13 +112,12 @@
 
 +(SecKeyRef)getPublicKeyRef{
     
-    NSString *bundlePath = [[NSBundle bundleForClass:[self class]].resourcePath
-                            stringByAppendingPathComponent:@"/HWCommunication.bundle"];
+    NSString *bundlePath = [NSBundle bundleForClass:[self class]].resourcePath;
     NSBundle *resource_bundle = [NSBundle bundleWithPath:bundlePath];
     
-    
+    NSString *cerNameString= [HWUserDefault stringForKey:HW_CER_NAME];
     NSString * path =[resource_bundle.resourcePath
-                      stringByAppendingPathComponent:@"21001435.cer"];
+                      stringByAppendingPathComponent:cerNameString];
     
     NSData *certData = [NSData dataWithContentsOfFile:path];
     
@@ -193,6 +192,39 @@ size_t const kKeySize = kCCKeySizeAES128;
     return nil;
 }
 
++ (NSData *)decodeAES:(NSString *)content key:(NSString *)key {
+     NSData *data = [HWEncryptionUtil dataForHexString:content];
+    
+//    NSMutableData *data = [NSMutableData dataWithCapacity:content.length/2.0];
+//    unsigned char whole_bytes;
+//    char byte_chars[3] = {'\0','\0','\0'};
+//    int i;
+//    for(i = 0 ; i < [content length]/2 ; i++)    {
+//        byte_chars[0] = [content characterAtIndex:i * 2];
+//        byte_chars[1] = [content characterAtIndex:i * 2 + 1];
+//        whole_bytes = strtol(byte_chars, NULL, 16);
+//        [data appendBytes:&whole_bytes length:1];
+//    }
+    
+    char keyPtr[kCCKeySizeAES128 + 1];
+    bzero(keyPtr, sizeof(keyPtr));
+    [key getCString:keyPtr maxLength:sizeof(keyPtr) encoding:NSUTF8StringEncoding];
+    NSUInteger dataLength = [data length];
+    size_t bufferSize = dataLength + kCCBlockSizeAES128;
+    void *buffer = malloc(bufferSize);
+    size_t numBytesDecrypted = 0;
+    CCCryptorStatus cryptStatus = CCCrypt(kCCDecrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding | kCCOptionECBMode, keyPtr, kCCBlockSizeAES128, NULL, [data bytes], dataLength, buffer, bufferSize, &numBytesDecrypted);
+    
+    if(cryptStatus == kCCSuccess){
+        
+        return [NSData dataWithBytesNoCopy:buffer length:numBytesDecrypted];
+    }
+    
+    free(buffer);
+    
+    return nil;
+    
+}
 
 // 普通字符串转换为十六进
 + (NSString *)hexStringFromData:(NSData *)data {
@@ -272,6 +304,5 @@ size_t const kKeySize = kCCKeySizeAES128;
     
     return data;
 }
-
 
 @end

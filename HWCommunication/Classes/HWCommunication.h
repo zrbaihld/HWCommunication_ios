@@ -12,7 +12,7 @@
 @class HWChatMessageModel;
 @class HWRequestUtil;
 #import "HWNetWorkManager.h"
-
+#import <AliyunOSSiOS/OSSService.h>
 
 typedef void( ^ LoginSuccess)(id response);
 typedef void( ^ LoginFaild)(id error);
@@ -59,7 +59,7 @@ extern NSString* hw_orgno;
 
 
 + (instancetype)shareManager;//单例获取对象
-+ (void)initConfig:(NSString*)key_p orgno:(NSString*)orgno_p ;//初始化
++ (void)initConfig:(NSString*)baseUrl key:(NSString*)key_p orgno:(NSString*)orgno_p mCername:(NSString*)mCername;//初始化
 
 -(void)login:(NSString*)phone name:(NSString*)name uid:(NSString*)uid zone:(NSString*)zone;//登录 zone 为手机区号 默认是86
 -(void)login:(NSString*)phone name:(NSString*)name uid:(NSString*)uid;//登录
@@ -86,7 +86,10 @@ extern NSString* hw_orgno;
  是否同意好友申请
  **/
 -(void)handlerUserApply:(NSString*)id isAgree:(Boolean)isAgree withSuccessBlock:(ResponseSuccess)successBlock withFailureBlock:(ResponseFail)failureBlock;
-
+/**
+ 获取离线消息
+ **/
+-(void)getOutLineMessage;
 /**
  发送文本
  0文本 4 图片 5 文件
@@ -145,5 +148,9 @@ extern NSString* hw_orgno;
 - (void)setDebug:(BOOL)debug;//是否开启调试模式的日志 （默认关闭）
 - (void)joinChannel:(NSString*)msgID type:(NSString*)type;//加入频道
 -(void)joinChannel:(NSString*)msgID type:(NSString*)type config:(nullable AgoraVideoEncoderConfiguration*)encoderConfiguration;//加入频道 config 是配置文件
+-(id)getLoginEntity;//获取登录返回的参数
+-(NSString*)getPicBaseUrl;
+-(OSSClient*)getOSSClient;
+-(NSString*)getRoomName:uid;
 NS_ASSUME_NONNULL_END
 @end

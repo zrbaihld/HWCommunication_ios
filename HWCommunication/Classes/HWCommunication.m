@@ -14,6 +14,8 @@
 #import "HWSocketManager.h"
 #import "HWDBManager.h"
 #import "ConfigConstant.h"
+#import "HWEncryptionUtil.h"
+
 
 static HWCommunication *instance = nil;
 
@@ -27,21 +29,29 @@ static HWCommunication *instance = nil;
 
 NSString *hw_key=@"";
 NSString *hw_orgno=@"";
+NSString *hw_base_url=@"";
+NSString *hw_cer_name=@"";
 
 NSString* mPhone;
 NSString* mUid;
+id loginEntity;
+OSSClient* client;
 
 
 + (instancetype)shareManager {
     return [[HWCommunication alloc] init];
 }
 
-+ (void)initConfig:(NSString*)key_p orgno:(NSString*)orgno_p  {
+
++ (void)initConfig:(NSString*)baseUrl key:(NSString*)key_p orgno:(NSString*)orgno_p mCername:(NSString*)mCername  {
     [HWUserDefault setObject:key_p forKey:HW_KEY];
     [HWUserDefault setObject:orgno_p forKey:HW_ORGNO];
-    
+    [HWUserDefault setObject:baseUrl forKey:HW_BASE_URL];
+    [HWUserDefault setObject:mCername forKey:HW_CER_NAME];
     hw_key=key_p;
     hw_orgno=orgno_p;
+    hw_base_url=baseUrl;
+    hw_cer_name=mCername;
 }
 
 - (instancetype)init{
@@ -64,99 +74,80 @@ NSString* mUid;
     self.mDataBaseName=[[hw_orgno stringByAppendingString:@"_"] stringByAppendingString:self.mUid];
     [HWUserDefault setObject:self.mDataBaseName forKey:HW_DATABASE];
     [HWUserDefault setObject:self.mUid forKey:HW_UID];
-    [[HWSocketManager shareManager] connect:uid connected:^{
-        [HWRequestUtil loginApi:uid name:name uid:uid zone:zone withSuccessBlock:^(id response) {
+    [HWRequestUtil loginApi:uid name:name uid:uid zone:zone withSuccessBlock:^(id response) {
+        if([@"900" isEqual:response[@"status"]]){
+            [self setLoginData:response[@"data"]];
+            [[HWSocketManager shareManager] connect:loginEntity[@"socketurl"] uid:uid connected:^{
+                //todo
+                [self getOutLineMessage];
+            } newMsg:^(NSArray * _Nonnull data, SocketAckEmitter * _Nonnull ack) {
+                
+                NSDictionary *message ;
+                NSString *messageStr = data.firstObject;
+                [HWLogger Log:messageStr];
+                messageStr= [messageStr stringByReplacingOccurrencesOfString:@"\\" withString:@""];
+                [HWLogger Log:messageStr];
+                message=[self dictForJSONString:messageStr];
+                NSDictionary *content = message[@"content"];
+                [self->_mSocketMessageList setObject:content forKey:[NSString stringWithFormat:@"%@",content[@"id"]]];
+                NSLog(@"%@", [self->_mSocketMessageList objectForKey:[NSString stringWithFormat:@"%@",content[@"id"]]]);
+                
+                
+                if ([@"lineapply" isEqual:message[@"type"]]) {//linetype 0 语音 1视频
+                    if(self->_mApplyConnect!=nil)
+                        self->_mApplyConnect(content[@"linetype"],content[@"uid"],content[@"id"]);
+                }else if([@"lineagree" isEqual:message[@"type"]]){
+                    //            self->_mApplyConnect(content[@"linetype"],content[@"uid"],content[@"id"]);
+                }else if([@"linerefuse" isEqual:message[@"type"]]){
+                    if(self->_mRefuseConnectApply!=nil)
+                        self->_mRefuseConnectApply(content[@"linetype"],content[@"uid"],content[@"id"]);
+                }else if([@"friendapply" isEqual:message[@"type"]]){
+                    if(self->_mApplyFriend!=nil)
+                        self->_mApplyFriend(content[@"uid"],content[@"id"]);
+                }else if([@"friendagree" isEqual:message[@"type"]]){
+                    if(self->_mApplyFriendAgree!=nil)
+                        self->_mApplyFriendAgree(content[@"uid"],content[@"id"]);
+                }else if([@"friendrefuse" isEqual:message[@"type"]]){
+                    if(self->_mApplyFriendRefuce!=nil)
+                        self->_mApplyFriendRefuce(content[@"uid"],content[@"id"]);
+                }else if([@"messages" isEqual:message[@"type"]]){
+                    if(self->_mNewMessage!=nil)
+                        self->_mNewMessage(content[@"uid"],content[@"messages"],content[@"id"]);
+                    HWChatMessageModel *messageModel = [HWChatMessageModel yy_modelWithJSON:content];
+                    Boolean read=false;
+                    if(self->_mChatRoomNewMessageModel!=nil){
+                        read= self->_mChatRoomNewMessageModel(messageModel);
+                    }
+                    
+                    messageModel.read=read;
+                    
+                    messageModel.room=[self getRoomName:messageModel.uid];
+                    messageModel.fromUid=messageModel.uid;
+                    messageModel.msg_id=content[@"id"];
+                    messageModel.direction=1;
+                    
+                    messageModel.currentTimeMillis=[[NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970]*1000] longLongValue];
+                    
+                    [[HWDBManager shareManager] addMessage:messageModel];
+                    [[HWDBManager shareManager] addOrUpdateConversationWithMessage:messageModel isChatting:false];
+                    [self->_mSocketMessageList removeObjectForKey:[NSString stringWithFormat:@"%@",content[@"id"]]];
+                }
+            }
+             ];
+            if(self.mLoginSuccess!=nil)
+                self.mLoginSuccess(@"{status:'900',info:'成功',data:''}");
+        }else{
             if(self.mLoginSuccess!=nil)
                 self.mLoginSuccess(response);
-        } withFailureBlock:^(NSError *error) {
-            if(self.mLoginFaild!=nil)
-                self.mLoginFaild(error);
-        }];
-        //todo
-        NSString* msgId=[[HWDBManager shareManager] getLastMessageID];
-        [self getUnLineMessageList:msgId withSuccessBlock:^(id response) {
-            if (self->_mUnLineMessageBackSuccess!=nil) {
-                self->_mUnLineMessageBackSuccess(response);
-            }
-           
-           NSArray* unreadModes= response[@"data"];
-            
-//            {"status":1,"id":381,"message":"Ppp","uid":"1","messagetype":0,"createtime":"2019-06-21T11:00:10"}
-      
-            for (NSDictionary *messageStr in unreadModes) {
-                HWChatMessageModel* messageModel=[HWChatMessageModel new];
-                messageModel.direction=1;
-                messageModel.msg_id=messageStr[@"id"];
-                messageModel.message=messageStr[@"message"];
-                 messageModel.uid=messageStr[@"uid"];
-                messageModel.room=messageStr[@"uid"];
-          
-                NSNumber *type=messageStr[@"messagetype"];
-                messageModel.messagetype=type==nil?0:type.intValue;
-                messageModel.createtime=messageStr[@"createtime"];
-                [[HWDBManager shareManager] addMessage:messageModel];
-                [[HWDBManager shareManager] addOrUpdateConversationWithMessage:messageModel isChatting:false];
-            }
-            
-        } withFailureBlock:^(NSError *error) {
-            if (self->_mUnLineMessageBackFaild!=nil) {
-                self->_mUnLineMessageBackFaild(error);
-            }
-        }];
-    } newMsg:^(NSArray * _Nonnull data, SocketAckEmitter * _Nonnull ack) {
-        
-        NSDictionary *message ;
-        NSString *messageStr = data.firstObject;
-        [HWLogger Log:messageStr];
-        messageStr= [messageStr stringByReplacingOccurrencesOfString:@"\\" withString:@""];
-        [HWLogger Log:messageStr];
-        message=[self dictForJSONString:messageStr];
-        NSDictionary *content = message[@"content"];
-        [self->_mSocketMessageList setObject:content forKey:[NSString stringWithFormat:@"%@",content[@"id"]]];
-        NSLog(@"%@", [self->_mSocketMessageList objectForKey:[NSString stringWithFormat:@"%@",content[@"id"]]]);
-        
-        
-        if ([@"lineapply" isEqual:message[@"type"]]) {//linetype 0 语音 1视频
-            if(self->_mApplyConnect!=nil)
-            self->_mApplyConnect(content[@"linetype"],content[@"uid"],content[@"id"]);
-        }else if([@"lineagree" isEqual:message[@"type"]]){
-            //            self->_mApplyConnect(content[@"linetype"],content[@"uid"],content[@"id"]);
-        }else if([@"linerefuse" isEqual:message[@"type"]]){
-            if(self->_mRefuseConnectApply!=nil)
-            self->_mRefuseConnectApply(content[@"linetype"],content[@"uid"],content[@"id"]);
-        }else if([@"friendapply" isEqual:message[@"type"]]){
-              if(self->_mApplyFriend!=nil)
-            self->_mApplyFriend(content[@"uid"],content[@"id"]);
-        }else if([@"friendagree" isEqual:message[@"type"]]){
-                if(self->_mApplyFriendAgree!=nil)
-            self->_mApplyFriendAgree(content[@"uid"],content[@"id"]);
-        }else if([@"friendrefuse" isEqual:message[@"type"]]){
-              if(self->_mApplyFriendRefuce!=nil)
-            self->_mApplyFriendRefuce(content[@"uid"],content[@"id"]);
-        }else if([@"messages" isEqual:message[@"type"]]){
-            if(self->_mNewMessage!=nil)
-                self->_mNewMessage(content[@"uid"],content[@"messages"],content[@"id"]);
-            HWChatMessageModel *messageModel = [HWChatMessageModel yy_modelWithJSON:content];
-            Boolean read=false;
-            if(self->_mChatRoomNewMessageModel!=nil){
-            read= self->_mChatRoomNewMessageModel(messageModel);
-            }
-          
-            messageModel.read=read;
-          
-            messageModel.room=messageModel.uid;
-            messageModel.fromUid=messageModel.uid;
-            messageModel.msg_id=content[@"id"];
-            messageModel.direction=1;
-           
-            messageModel.currentTimeMillis=[[NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970]*1000] longLongValue];
-            
-            [[HWDBManager shareManager] addMessage:messageModel];
-            [[HWDBManager shareManager] addOrUpdateConversationWithMessage:messageModel isChatting:false];
-          [self->_mSocketMessageList removeObjectForKey:[NSString stringWithFormat:@"%@",content[@"id"]]];
         }
-    }
-     ];
+       
+    } withFailureBlock:^(NSError *error) {
+        if(self.mLoginFaild!=nil)
+            self.mLoginFaild(error);
+    }];
+    
+    
+    
     
 }
 
@@ -169,7 +160,34 @@ NSString* mUid;
     
 }
 
-
+-(void)getOutLineMessage{
+    NSString* msgId=[[HWDBManager shareManager] getLastMessageID];
+    [self getUnLineMessageList:msgId withSuccessBlock:^(id response) {
+        if (self->_mUnLineMessageBackSuccess!=nil) {
+            self->_mUnLineMessageBackSuccess(response);
+        }
+        NSArray* unreadModes= response[@"data"];
+        for (NSDictionary *messageStr in unreadModes) {
+            HWChatMessageModel* messageModel=[HWChatMessageModel new];
+            messageModel.direction=1;
+            messageModel.msg_id=messageStr[@"id"];
+            messageModel.message=messageStr[@"message"];
+            messageModel.uid=messageStr[@"uid"];
+            messageModel.room=messageStr[@"uid"];
+            
+            NSNumber *type=messageStr[@"messagetype"];
+            messageModel.messagetype=type==nil?0:type.intValue;
+            messageModel.createtime=messageStr[@"createtime"];
+            [[HWDBManager shareManager] addMessage:messageModel];
+            [[HWDBManager shareManager] addOrUpdateConversationWithMessage:messageModel isChatting:false];
+        }
+        
+    } withFailureBlock:^(NSError *error) {
+        if (self->_mUnLineMessageBackFaild!=nil) {
+            self->_mUnLineMessageBackFaild(error);
+        }
+    }];
+}
 
 /**
  好友申请
@@ -226,7 +244,7 @@ NSString* mUid;
     [HWRequestUtil appalyVoice:self.mUid tuid:tuid type:type withSuccessBlock:^(id response) {
         
         if ([@"900" isEqual:response[@"status"]]) {
-              [self joinCHannelRoom:response[@"data"][@"key"] type:type channel:response[@"data"][@"roomno"] config:encoderConfiguration];
+            [self joinCHannelRoom:response[@"data"][@"key"] type:type channel:response[@"data"][@"roomno"] config:encoderConfiguration];
         }
         successBlock(response);
     } withFailureBlock:failureBlock];
@@ -237,32 +255,32 @@ NSString* mUid;
 
 -(void)leaveChannel{
     if (_mHWMediaUtil!=nil) {
-           [self.mHWMediaUtil leaveChannel];
+        [self.mHWMediaUtil leaveChannel];
         _mHWMediaUtil=nil;
     }
- 
+    
 }
 - (int)switchCamera{
     if (_mHWMediaUtil!=nil) {
-       return  [self.mHWMediaUtil switchCamera];
+        return  [self.mHWMediaUtil switchCamera];
     }
     return -1;
 }
 
 - (int)muteLocalAudioStream:(BOOL)mute{
     if (_mHWMediaUtil!=nil) {
-     return   [self.mHWMediaUtil muteLocalAudioStream:mute];
-       
+        return   [self.mHWMediaUtil muteLocalAudioStream:mute];
+        
     }
-      return -1;
+    return -1;
 }
 
 - (int)muteLocalVideoStream:(BOOL)mute{
     if (_mHWMediaUtil!=nil) {
-       return [self.mHWMediaUtil muteLocalVideoStream:mute];
+        return [self.mHWMediaUtil muteLocalVideoStream:mute];
         
     }
-      return -1;
+    return -1;
 }
 
 
@@ -324,8 +342,8 @@ NSString* mUid;
         return;
     }
     [HWRequestUtil refuseApplyVoice:content[@"roomno"] uid:content[@"uid"] withSuccessBlock:successBlock withFailureBlock:failureBlock];
-      [self->_mSocketMessageList removeObjectForKey:msg_id];
-
+    [self->_mSocketMessageList removeObjectForKey:msg_id];
+    
 }
 
 -(void)getUnLineAllMessageList:(ResponseSuccess)successBlock withFailureBlock:(ResponseFail)failureBlock{
@@ -393,4 +411,59 @@ NSString* mUid;
     }
     [self.mHWMediaUtil joinChannel:channel];
 }
+-(void)setLoginData:(NSString*)data{
+    [HWUserDefault setObject:data forKey:HW_LOGIN_DATA];
+    
+    loginEntity = nil;
+    loginEntity = [self getLoginEntity:data];
+}
+-(id)getLoginEntity{
+    if (loginEntity!=nil) {
+        return loginEntity;
+    }
+    NSString* data= [HWUserDefault stringForKey:HW_LOGIN_DATA];
+    return [self getLoginEntity:data];
+}
+-(id)getLoginEntity:(NSString*)data{
+    NSString* key=hw_orgno;
+    while (key.length<16) {
+        key=[key stringByAppendingString:@"0"];
+    }
+    NSData* jsonData=[HWEncryptionUtil decodeAES:data key:key];
+    loginEntity = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:nil];
+    return loginEntity;
+}
+-(NSString*)getPicBaseUrl{
+    if (loginEntity!=nil) {
+        return [loginEntity[@"ftpurl"] stringByAppendingString:@"/"];
+    }else{
+        [self getLoginEntity];
+        if (loginEntity!=nil) {
+            return [loginEntity[@"ftpurl"] stringByAppendingString:@"/"];
+        }
+        return @"";
+    }
+}
+-(OSSClient*)getOSSClient{
+ 
+    if(client==nil){
+        id loginEntity=[[HWCommunication shareManager] getLoginEntity];
+        NSString* accessKeyId=loginEntity[@"accessKeyId"];
+        NSString* accessKeySecret=loginEntity[@"accessKeySecret"];
+        NSString* endpoint=loginEntity[@"endpoint"];
+        id<OSSCredentialProvider> credential = [[OSSStsTokenCredentialProvider alloc] initWithAccessKeyId:accessKeyId secretKeyId:accessKeySecret securityToken:@"SecurityToken"];
+        client=[[OSSClient alloc] initWithEndpoint:endpoint credentialProvider:credential];
+    }
+    return client;
+}
+-(NSString*)getRoomName:uid{
+    NSString* roomName=@"";
+    if ([uid compare:_mUid] ) {
+        roomName = [uid stringByAppendingString:_mUid];
+    } else {
+        roomName = [_mUid stringByAppendingString:uid];
+    }
+    return roomName;
+}
+
 @end
